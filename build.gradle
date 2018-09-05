@@ -29,6 +29,15 @@ buildscript {
     classpath 'org.scoverage:gradle-scoverage:2.3.0'
     classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
     classpath 'org.owasp:dependency-check-gradle:3.1.2'
+    classpath "com.diffplug.spotless:spotless-plugin-gradle:3.10.0"
+  }
+}
+
+apply plugin: "com.diffplug.gradle.spotless"
+spotless {
+  scala {
+    target 'streams/**/*.scala'
+    scalafmt('1.5.1').configFile('checkstyle/.scalafmt.conf')
   }
 }
 
@@ -999,9 +1008,11 @@ project(':streams:streams-scala') {
     testCompile project(':core').sourceSets.test.output
     testCompile project(':streams').sourceSets.test.output
     testCompile project(':clients').sourceSets.test.output
+    testCompile project(':streams:test-utils')
 
     testCompile libs.junit
     testCompile libs.scalatest
+    testCompile libs.easymock
 
     testRuntime libs.slf4jlog4j
   }
@@ -1173,7 +1184,7 @@ project(':jmh-benchmarks') {
     compile project(':clients')
     compile project(':streams')
     compile libs.jmhCore
-    compile libs.jmhGeneratorAnnProcess
+    annotationProcessor libs.jmhGeneratorAnnProcess
     compile libs.jmhCoreBenchmarks
   }
 
